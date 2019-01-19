@@ -36,10 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = findViewById(R.id.recycler_view);
-//        swipeRefreshLayout= findViewById(R.id.swipe_layout);
-        //swipeRefreshLayout.setOnRefreshListener(this);
         load_movie();
-
     }
 
     private void load_movie() {
@@ -52,7 +49,11 @@ public class MainActivity extends AppCompatActivity {
                     arrayList = new ArrayList<list_movie>();
                     for (int i = 0; i < jsonArray.length(); i++) {
                         list_movie = new list_movie();
+                        list_movie.setId(jsonArray.getJSONObject(i).getInt("id_movie"));
                         list_movie.setTitle(jsonArray.getJSONObject(i).getString("title"));
+                        list_movie.setImage_url(jsonArray.getJSONObject(i).getString("poster_path"));
+                        list_movie.setOverview(jsonArray.getJSONObject(i).getString("overview"));
+                        list_movie.setRelease_date(jsonArray.getJSONObject(i).getString("release_date"));
                         Log.d("error", "onResponse: "+list_movie.getTitle());
                         arrayList.add(list_movie);
                     }

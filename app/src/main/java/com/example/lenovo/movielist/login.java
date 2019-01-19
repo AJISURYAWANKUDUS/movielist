@@ -11,11 +11,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.DefaultClientConnection;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -27,6 +36,8 @@ public class login extends AppCompatActivity {
     private EditText editText_email, editText_password;
     private Button button_login;
     private String email, password;
+    private RequestQueue requestQueue;
+    private JsonObjectRequest jsonObjectRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,68 +55,100 @@ public class login extends AppCompatActivity {
                     editText_email.setError("email cannot empty");
                     editText_password.setError("password cannot empty");
                 } else {
-                    new login_execute().execute();
+//                    new login_execute().execute();
+                    login_process();
                 }
+            }
+
+            private void login_process() {
+                requestQueue = Volley.newRequestQueue(login.this);
+                jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, config_url.url + "login.php?username=" + email + "&password=" + password, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject result = response.getJSONObject("Result");
+                            String hasil = result.getString("sukses");
+                            if (hasil.equals("true")) {
+                                SharedPreferences sharedPreferences = getSharedPreferences("login_email", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                editor.putString("email", email);
+                                editor.apply();
+                                startActivity(intent);
+                                Log.d("eror if", "onPostExecute: ");
+                            } else {
+                                Log.d("eror else", "onPostExecute: ");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
             }
         });
     }
 
-    public class login_execute extends AsyncTask<Void, Void, JSONObject> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            if (jsonObject != null) {
-                try {
-                    JSONObject result = jsonObject.getJSONObject("Result");
-                    String hasil = result.getString("Sukses");
-                    if (hasil.equals("true")) {
-                        SharedPreferences sharedPreferences = getSharedPreferences("login_email", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        editor.putString("email", email);
-                        editor.apply();
-                        startActivity(intent);
-                        Log.d("eror if", "onPostExecute: ");
-                    } else {
-                        Log.d("eror else", "onPostExecute: ");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Log.e("TAG", "onPostExecute: " + "json");
-            }
-        }
-
-        @Override
-        protected JSONObject doInBackground(Void... voids) {
-            JSONObject jsonObject;
-            try {
-                String url = config_url.url + "login.php?username=" + email + "&password=" + password;
-                DefaultHttpClient httpClient = new DefaultHttpClient();
-                HttpGet httpGet = new HttpGet(url);
-                HttpResponse httpResponse = httpClient.execute(httpGet);
-                HttpEntity httpEntity = httpResponse.getEntity();
-                InputStream inputStream = httpEntity.getContent();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"), 8);
-                StringBuilder stringBuilder = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    stringBuilder.append(line).append("\n");
-                }
-                inputStream.close();
-                String json = stringBuilder.toString();
-                jsonObject = new JSONObject(json);
-            } catch (Exception e) {
-                jsonObject = null;
-            }
-            return jsonObject;
-        }
-    }
+//    public class login_execute extends AsyncTask<Void, Void, JSONObject> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(JSONObject jsonObject) {
+//            if (jsonObject != null) {
+//                try {
+//                    JSONObject result = jsonObject.getJSONObject("Result");
+//                    String hasil = result.getString("Sukses");
+//                    if (hasil.equals("true")) {
+//                        SharedPreferences sharedPreferences = getSharedPreferences("login_email", MODE_PRIVATE);
+//                        SharedPreferences.Editor editor = sharedPreferences.edit();
+//                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                        editor.putString("email", email);
+//                        editor.apply();
+//                        startActivity(intent);
+//                        Log.d("eror if", "onPostExecute: ");
+//                    } else {
+//                        Log.d("eror else", "onPostExecute: ");
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                Log.e("TAG", "onPostExecute: " + "json");
+//            }
+//        }
+//
+//        @Override
+//        protected JSONObject doInBackground(Void... voids) {
+//            JSONObject jsonObject;
+//            try {
+//                String url = config_url.url + "login.php?username=" + email + "&password=" + password;
+//                DefaultHttpClient httpClient = new DefaultHttpClient();
+//                HttpGet httpGet = new HttpGet(url);
+//                HttpResponse httpResponse = httpClient.execute(httpGet);
+//                HttpEntity httpEntity = httpResponse.getEntity();
+//                InputStream inputStream = httpEntity.getContent();
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"), 8);
+//                StringBuilder stringBuilder = new StringBuilder();
+//                String line;
+//                while ((line = reader.readLine()) != null) {
+//                    stringBuilder.append(line).append("\n");
+//                }
+//                inputStream.close();
+//                String json = stringBuilder.toString();
+//                jsonObject = new JSONObject(json);
+//            } catch (Exception e) {
+//                jsonObject = null;
+//            }
+//            return jsonObject;
+//        }
+//    }
 
 }
