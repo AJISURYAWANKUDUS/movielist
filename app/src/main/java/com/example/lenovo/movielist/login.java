@@ -1,5 +1,6 @@
 package com.example.lenovo.movielist;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -38,6 +39,7 @@ public class login extends AppCompatActivity {
     private String email, password;
     private RequestQueue requestQueue;
     private JsonObjectRequest jsonObjectRequest;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,44 +57,61 @@ public class login extends AppCompatActivity {
                     editText_email.setError("email cannot empty");
                     editText_password.setError("password cannot empty");
                 } else {
-//                    new login_execute().execute();
-                    login_process();
+                    login_process(email,password);
+//                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                    startActivity(intent);
                 }
             }
 
-            private void login_process() {
-                requestQueue = Volley.newRequestQueue(login.this);
-                jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, config_url.url + "login.php?username=" + email + "&password=" + password, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONObject result = response.getJSONObject("Result");
-                            String hasil = result.getString("sukses");
-                            if (hasil.equals("true")) {
-                                SharedPreferences sharedPreferences = getSharedPreferences("login_email", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                editor.putString("email", email);
-                                editor.apply();
-                                startActivity(intent);
-                                Log.d("eror if", "onPostExecute: ");
-                            } else {
-                                Log.d("eror else", "onPostExecute: ");
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
 
-                    }
-                });
-            }
         });
     }
-
+    private void login_process(String em, String pass) {
+        Log.d("coba1", "login_process: " + em + " " + pass);
+        requestQueue = Volley.newRequestQueue(login.this);
+        Log.d("coba8", "login_process: ");
+        Log.d("url", "login_process: "+config_url.url+ "login.php?username=" + em + "&password=" + pass);
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, config_url.url + "login.php?username=" + em + "&password=" + pass, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONObject jsonObject = response.getJSONObject("Result");
+                    String hasil = jsonObject.getString("sukses");
+                    String status = jsonObject.getString("status");
+                    if (hasil.equals("true")&&status.equals("admin")) {
+                        Log.d("coba3", "onResponse: ");
+                        SharedPreferences sharedPreferences = getSharedPreferences("login_email", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        editor.putString("email", email);
+                        editor.putString("status","admin");
+                        editor.apply();
+                        startActivity(intent);
+                    } else if (hasil.equals("true")&&status.equals("user")){
+                        Log.d("coba3", "onResponse: ");
+                        SharedPreferences sharedPreferences = getSharedPreferences("login_email", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        editor.putString("email", email);
+                        editor.putString("status","user");
+                        editor.apply();
+                        startActivity(intent);
+                    }else {
+                        Log.e("tag", "onResponse: ");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d("coba5", "onResponse: "+e.getMessage());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("coba6", "onErrorResponse: ");
+            }
+        });
+        requestQueue.add(jsonObjectRequest);
+    }
 //    public class login_execute extends AsyncTask<Void, Void, JSONObject> {
 //
 //        @Override

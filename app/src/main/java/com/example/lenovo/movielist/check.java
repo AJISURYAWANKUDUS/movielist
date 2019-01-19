@@ -7,15 +7,18 @@ import android.support.v7.app.AppCompatActivity;
 
 public class check extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
-    private String email;
+    private String email,status;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = getSharedPreferences("login_email",MODE_PRIVATE);
         email = sharedPreferences.getString("email","");
+        status = sharedPreferences.getString("status","");
         if (email == ""){
             startActivity(new Intent(getApplicationContext(),login.class));
-        }else{
+        }else if (email == email && status == "admin"){
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+        }else if (email == email && status == "user"){
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
         }
     }
