@@ -17,9 +17,9 @@ public class check extends AppCompatActivity {
         if (email == ""){
             startActivity(new Intent(getApplicationContext(),login.class));
         }else if (email == email && status == "admin"){
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            startActivity(new Intent(getApplicationContext(),home_admin.class));
         }else if (email == email && status == "user"){
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            startActivity(new Intent(getApplicationContext(),home_user.class));
         }
     }
 }

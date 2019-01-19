@@ -26,7 +26,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class home_admin extends AppCompatActivity {
     private RecyclerView recyclerView;
     private JsonObjectRequest stringRequest;
     private RequestQueue requestQueue;
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_home_admin);
         recyclerView = findViewById(R.id.recycler_view);
         load_movie();
     }
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_activity_menu, menu);
+        inflater.inflate(R.menu.admin_menu, menu);
         return true;
     }
 
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void load_movie() {
-        requestQueue = Volley.newRequestQueue(MainActivity.this);
+        requestQueue = Volley.newRequestQueue(home_admin.this);
         stringRequest = new JsonObjectRequest(Request.Method.GET, config_url.url + "list_movie.php", null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -80,9 +80,9 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("error", "onResponse: " + list_movie.getTitle());
                         arrayList.add(list_movie);
                     }
-                    adapter_home adapter_home = new adapter_home(MainActivity.this, arrayList);
+                    adapter_home adapter_home = new adapter_home(home_admin.this, arrayList);
                     recyclerView.setAdapter(adapter_home);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                    recyclerView.setLayoutManager(new LinearLayoutManager(home_admin.this));
 
                 } catch (JSONException e) {
                     e.printStackTrace();

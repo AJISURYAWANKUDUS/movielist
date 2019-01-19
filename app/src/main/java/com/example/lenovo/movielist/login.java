@@ -82,7 +82,7 @@ public class login extends AppCompatActivity {
                         Log.d("coba3", "onResponse: ");
                         SharedPreferences sharedPreferences = getSharedPreferences("login_email", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), home_admin.class);
                         editor.putString("email", email);
                         editor.putString("status","admin");
                         editor.apply();
@@ -91,12 +91,13 @@ public class login extends AppCompatActivity {
                         Log.d("coba3", "onResponse: ");
                         SharedPreferences sharedPreferences = getSharedPreferences("login_email", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), home_user.class);
                         editor.putString("email", email);
                         editor.putString("status","user");
                         editor.apply();
                         startActivity(intent);
                     }else {
+                        Toast.makeText(getApplicationContext(),"Check your email and password again",Toast.LENGTH_SHORT).show();
                         Log.e("tag", "onResponse: ");
                     }
                 } catch (JSONException e) {
