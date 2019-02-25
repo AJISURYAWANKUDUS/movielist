@@ -4,10 +4,6 @@
         android:id="@+id/add"
         android:title="Add Movie" />
     <item
-        android:id="@+id/edit"
-        android:title="Edit Movie" />
-    <item
-        android:id="@+id/delete"
-        android:title="Delete Movie" />
-
+        android:id="@+id/sign_out"
+        android:title="Sign Out"/>
 </menu>

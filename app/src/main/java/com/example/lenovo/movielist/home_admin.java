@@ -1,5 +1,7 @@
 package com.example.lenovo.movielist;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -33,7 +36,8 @@ public class home_admin extends AppCompatActivity {
     private ArrayList<list_movie> arrayList;
     private list_movie list_movie;
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    private SharedPreferences sharedPreferences;
+    private String email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,16 +51,14 @@ public class home_admin extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.admin_menu, menu);
         return true;
-    }
 
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add:
                 break;
-            case R.id.edit:
-                break;
-            case R.id.delete:
+            case R.id.sign_out:
                 break;
         }
         return super.onOptionsItemSelected(item);

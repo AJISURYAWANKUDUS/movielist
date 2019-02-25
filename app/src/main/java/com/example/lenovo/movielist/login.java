@@ -39,8 +39,6 @@ public class login extends AppCompatActivity {
     private String email, password;
     private RequestQueue requestQueue;
     private JsonObjectRequest jsonObjectRequest;
-    private ProgressDialog progressDialog;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +56,6 @@ public class login extends AppCompatActivity {
                     editText_password.setError("password cannot empty");
                 } else {
                     login_process(email,password);
-//                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                    startActivity(intent);
                 }
             }
 
@@ -67,36 +63,24 @@ public class login extends AppCompatActivity {
         });
     }
     private void login_process(String em, String pass) {
-        Log.d("coba1", "login_process: " + em + " " + pass);
         requestQueue = Volley.newRequestQueue(login.this);
-        Log.d("coba8", "login_process: ");
-        Log.d("url", "login_process: "+config_url.url+ "login.php?username=" + em + "&password=" + pass);
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, config_url.url + "login.php?username=" + em + "&password=" + pass, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     JSONObject jsonObject = response.getJSONObject("Result");
                     String hasil = jsonObject.getString("sukses");
-                    String status = jsonObject.getString("status");
-                    if (hasil.equals("true")&&status.equals("admin")) {
+                    if (hasil.equals("true")) {
                         Log.d("coba3", "onResponse: ");
-                        SharedPreferences sharedPreferences = getSharedPreferences("login_email", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
                         Intent intent = new Intent(getApplicationContext(), home_admin.class);
-                        editor.putString("email", email);
-                        editor.putString("status","admin");
-                        editor.apply();
-                        startActivity(intent);
-                    } else if (hasil.equals("true")&&status.equals("user")){
-                        Log.d("coba3", "onResponse: ");
-                        SharedPreferences sharedPreferences = getSharedPreferences("login_email", MODE_PRIVATE);
+                        SharedPreferences sharedPreferences = getSharedPreferences("login",MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        Intent intent = new Intent(getApplicationContext(), home_user.class);
                         editor.putString("email", email);
-                        editor.putString("status","user");
+                        editor.putString("email_check", "admin");
                         editor.apply();
                         startActivity(intent);
-                    }else {
+                        finish();
+                    } else {
                         Toast.makeText(getApplicationContext(),"Check your email and password again",Toast.LENGTH_SHORT).show();
                         Log.e("tag", "onResponse: ");
                     }
@@ -113,62 +97,4 @@ public class login extends AppCompatActivity {
         });
         requestQueue.add(jsonObjectRequest);
     }
-//    public class login_execute extends AsyncTask<Void, Void, JSONObject> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected void onPostExecute(JSONObject jsonObject) {
-//            if (jsonObject != null) {
-//                try {
-//                    JSONObject result = jsonObject.getJSONObject("Result");
-//                    String hasil = result.getString("Sukses");
-//                    if (hasil.equals("true")) {
-//                        SharedPreferences sharedPreferences = getSharedPreferences("login_email", MODE_PRIVATE);
-//                        SharedPreferences.Editor editor = sharedPreferences.edit();
-//                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                        editor.putString("email", email);
-//                        editor.apply();
-//                        startActivity(intent);
-//                        Log.d("eror if", "onPostExecute: ");
-//                    } else {
-//                        Log.d("eror else", "onPostExecute: ");
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            } else {
-//                Log.e("TAG", "onPostExecute: " + "json");
-//            }
-//        }
-//
-//        @Override
-//        protected JSONObject doInBackground(Void... voids) {
-//            JSONObject jsonObject;
-//            try {
-//                String url = config_url.url + "login.php?username=" + email + "&password=" + password;
-//                DefaultHttpClient httpClient = new DefaultHttpClient();
-//                HttpGet httpGet = new HttpGet(url);
-//                HttpResponse httpResponse = httpClient.execute(httpGet);
-//                HttpEntity httpEntity = httpResponse.getEntity();
-//                InputStream inputStream = httpEntity.getContent();
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"), 8);
-//                StringBuilder stringBuilder = new StringBuilder();
-//                String line;
-//                while ((line = reader.readLine()) != null) {
-//                    stringBuilder.append(line).append("\n");
-//                }
-//                inputStream.close();
-//                String json = stringBuilder.toString();
-//                jsonObject = new JSONObject(json);
-//            } catch (Exception e) {
-//                jsonObject = null;
-//            }
-//            return jsonObject;
-//        }
-//    }
-
 }
